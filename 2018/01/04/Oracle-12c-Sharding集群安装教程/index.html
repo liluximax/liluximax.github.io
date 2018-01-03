@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Oracle,sharding" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Sharding新功能简介Oracle Sharding是Oracle 12.2版本推出的新功能,也称为数据分片,适用于online transaction processing (OLTP). Oracle Sharding基于表分区技术，是一种在数据层将数据水平分区存储到不同的数据库的技术. Sharding可以实现将一个分区表的不同分区存储在不同的数据库中,每个数据库位于不同的服务器，每一个">
+<meta name="keywords" content="Oracle,sharding">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle_12c_Sharding集群安装教程">
+<meta property="og:url" content="http://yoursite.com/2018/01/04/Oracle-12c-Sharding集群安装教程/index.html">
+<meta property="og:site_name" content="李璐汐的分享">
+<meta property="og:description" content="Sharding新功能简介Oracle Sharding是Oracle 12.2版本推出的新功能,也称为数据分片,适用于online transaction processing (OLTP). Oracle Sharding基于表分区技术，是一种在数据层将数据水平分区存储到不同的数据库的技术. Sharding可以实现将一个分区表的不同分区存储在不同的数据库中,每个数据库位于不同的服务器，每一个">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://cdn.app.compendium.com/uploads/user/e7c690e8-6ff9-102a-ac6d-e4aebca50425/f4a5b21d-66fa-4885-92bf-c4e81c06d916/Image/613751e21de943c16c35d330717c7df9/sharding11.png">
+<meta property="og:updated_time" content="2018-01-03T12:36:33.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Oracle_12c_Sharding集群安装教程">
+<meta name="twitter:description" content="Sharding新功能简介Oracle Sharding是Oracle 12.2版本推出的新功能,也称为数据分片,适用于online transaction processing (OLTP). Oracle Sharding基于表分区技术，是一种在数据层将数据水平分区存储到不同的数据库的技术. Sharding可以实现将一个分区表的不同分区存储在不同的数据库中,每个数据库位于不同的服务器，每一个">
+<meta name="twitter:image" content="https://cdn.app.compendium.com/uploads/user/e7c690e8-6ff9-102a-ac6d-e4aebca50425/f4a5b21d-66fa-4885-92bf-c4e81c06d916/Image/613751e21de943c16c35d330717c7df9/sharding11.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/04/Oracle-12c-Sharding集群安装教程/"/>
+
+
+
+
+
+  <title>Oracle_12c_Sharding集群安装教程 | 李璐汐的分享</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?3b6919bba4c7bf67de7e03fc03cc893b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李璐汐的分享</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/04/Oracle-12c-Sharding集群安装教程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Li Luxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李璐汐的分享">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Oracle_12c_Sharding集群安装教程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-04T04:21:17+08:00">
+                2018-01-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Database/" itemprop="url" rel="index">
+                    <span itemprop="name">Database</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Sharding新功能简介"><a href="#Sharding新功能简介" class="headerlink" title="Sharding新功能简介"></a>Sharding新功能简介</h1><p>Oracle Sharding是Oracle 12.2版本推出的新功能,也称为数据分片,适用于online transaction processing (OLTP). Oracle Sharding基于表分区技术，是一种在数据层将数据水平分区存储到不同的数据库的技术. Sharding可以实现将一个分区表的不同分区存储在不同的数据库中,每个数据库位于不同的服务器，每一个数据库都称为shard, 这些shard组成一个逻辑数据库,称为sharded database (SDB).  这个table也称为sharded table, 每个shard数据库中保存该表的不同数据集（按照sharding key分区）, 但是他们有相同的列(columns)。 </p>
+<p><img src="https://cdn.app.compendium.com/uploads/user/e7c690e8-6ff9-102a-ac6d-e4aebca50425/f4a5b21d-66fa-4885-92bf-c4e81c06d916/Image/613751e21de943c16c35d330717c7df9/sharding11.png" alt=""></p>
+<a id="more"></a>
+<p>Oracle Sharding优势：<br>Oracle Sharding技术提供线性扩展和失败隔离的优点：</p>
+<ul>
+<li><p>线性扩展: 因为每个shard是一个独立的数据库，通过增加新的Shard节点，来线性扩展性能。自动rebalance数据。</p>
+</li>
+<li><p>失败隔离: 由于Shard是一种shared-nothing技术，每个shard使用独立的硬件，因此一个shard节点出现故障，只会影响到这个shard存放的数据，而不会影响到其他shard。</p>
+</li>
+<li><p>按照地理位置分布数据：可以选择根据地理位置不同，将数据存储在不同的shard。</p>
+</li>
+<li><p>滚动升级：选择不同时间升级不同的shard。比如同一时间只升级一个或一部分shard，那么只有这些升级的shard中存储的数据受到影响，其他的shard不受到影响，可以继续提供服务。</p>
+</li>
+<li><p>云部署：Shard非常适合部署在cloud。</p>
+</li>
+</ul>
+<p><a href="https://blogs.oracle.com/database4cn/12c-oracle-sharding" target="_blank" rel="noopener">12c新特性-Oracle Sharding简介</a></p>
+<h1 id="Oracle-12c-realese2安装教程"><a href="#Oracle-12c-realese2安装教程" class="headerlink" title="Oracle 12c realese2安装教程"></a>Oracle 12c realese2安装教程</h1><h2 id="Oracle下载地址"><a href="#Oracle下载地址" class="headerlink" title="Oracle下载地址"></a>Oracle下载地址</h2><p><a href="http://www.oracle.com/technetwork/database/enterprise-edition/downloads/oracle12c-linux-12201-3608234.html?ssSourceSiteId=otncn" target="_blank" rel="noopener">Oracle下载地址</a></p>
+<h2 id="单机节点"><a href="#单机节点" class="headerlink" title="单机节点"></a>单机节点</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">10.244.4.30 1521 SID=orcl</span><br><span class="line">user:system   password:oracle</span><br></pre></td></tr></table></figure>
+<h2 id="shard集群信息"><a href="#shard集群信息" class="headerlink" title="shard集群信息"></a>shard集群信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">master：</span><br><span class="line">100.88.11.91 1521 SID=catadb</span><br><span class="line">user:app_schema   password:oracle</span><br><span class="line">sysdba:oracle</span><br><span class="line"></span><br><span class="line">shard1:</span><br><span class="line">100.88.11.96 1521 SID=sh1</span><br><span class="line">user:app_schema   password:oracle</span><br><span class="line"></span><br><span class="line">shard2:</span><br><span class="line">100.88.8.49 1521 SID=sh2</span><br><span class="line">user:app_schema   password:oracle</span><br></pre></td></tr></table></figure>
+<h2 id="单机版"><a href="#单机版" class="headerlink" title="单机版"></a>单机版</h2><h3 id="1-创建oracle用户及oinstall用户组"><a href="#1-创建oracle用户及oinstall用户组" class="headerlink" title="1.创建oracle用户及oinstall用户组"></a>1.创建oracle用户及oinstall用户组</h3><p>创建oracle用户和oinstall用户组</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo groupadd oinstall</span><br><span class="line">sudo groupadd dba</span><br><span class="line">sudo groupadd oper</span><br><span class="line">sudo useradd -g oinstall -G dba,oper oracle</span><br><span class="line">sudo passwd oracle</span><br></pre></td></tr></table></figure>
+<p>创建oracle安装目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[oracle] mkdir -p ~/u01/app</span><br><span class="line">[oracle] chown oracle:oinstall -R ~/u01</span><br></pre></td></tr></table></figure>
+<p>创建前一定要用<code>df -h</code>查看下磁盘分区，选择合适的安装目录，最好磁盘空间剩余大于20G，开发机下 / 目录只有50G空间，不建议将oracle的安装目录设置在 / 目录下。</p>
+<h3 id="2-设置swap分区"><a href="#2-设置swap分区" class="headerlink" title="2.设置swap分区"></a>2.设置swap分区</h3><p><code>free -m</code> 查看swap分区情况</p>
+<p>设置swap分区方法（512M）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo dd if=/dev/zero of=/swapfile1 bs=1024k count=512</span><br><span class="line">sudo mkswap /swapfile1</span><br><span class="line">sudo swapon /swapfile1</span><br><span class="line"></span><br><span class="line">sudo swapoff /swapfile #停用交换文件</span><br><span class="line">sudo rm /swapfile #删除文件</span><br></pre></td></tr></table></figure>
+<h3 id="3-vnc配置"><a href="#3-vnc配置" class="headerlink" title="3.vnc配置"></a>3.vnc配置</h3><p>通过vnc可以使用图形化界面安装oracle，大大提高安装成功率</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install tigervnc-server -y</span><br><span class="line">sudo yum install -y xterm</span><br></pre></td></tr></table></figure>
+<p><a href="http://www.linuxidc.com/Linux/2012-11/74076.htm" target="_blank" rel="noopener">vnc操作简介</a></p>
+<p>server开启vnc: <code>vncserver :1</code><br>server停止vnc: <code>vncserver -kill :1</code></p>
+<p><a href="https://www.realvnc.com/en/download/vnc/" target="_blank" rel="noopener">客户端vnc下载地址</a><br>客户端连接方法: <code>IP:开启的端口号</code></p>
+<p>TIPS:<br>1、如果vnc没有出现shell窗口，检查server是否安装xterm<br>2、如果使用更多图形化界面，安装gnome</p>
+<h3 id="4-安装oracle-12c依赖包"><a href="#4-安装oracle-12c依赖包" class="headerlink" title="4.安装oracle 12c依赖包"></a>4.安装oracle 12c依赖包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y binutils*</span><br><span class="line">sudo yum install -y compat-libcap1*</span><br><span class="line">sudo yum install -y compat-libstdc++*</span><br><span class="line">sudo yum install -y glibc*</span><br><span class="line">sudo yum install -y glibc-devel*</span><br><span class="line">sudo yum install -y ksh*</span><br><span class="line">sudo yum install -y libX11*</span><br><span class="line">sudo yum install -y libXau*</span><br><span class="line">sudo yum install -y libXi*</span><br><span class="line">sudo yum install -y libXtst*</span><br><span class="line">sudo yum install -y libaio*</span><br><span class="line">sudo yum install -y libaio-devel*</span><br><span class="line">sudo yum install -y libgcc*</span><br><span class="line">sudo yum install -y libstdc++*</span><br><span class="line">sudo yum install -y libstdc++-devel*</span><br><span class="line">sudo yum install -y libxcb*</span><br><span class="line">sudo yum install -y make*</span><br><span class="line">sudo yum install -y net-tools*</span><br><span class="line">sudo yum install -y nfs-utils*</span><br><span class="line">sudo yum install -y smartmontools*</span><br><span class="line">sudo yum install -y sysstat*</span><br><span class="line">sudo yum install -y unixODBC*</span><br><span class="line">sudo yum install -y binutils*686*</span><br><span class="line">sudo yum install -y compat-libcap1*686*</span><br><span class="line">sudo yum install -y compat-libstdc++*686*</span><br><span class="line">sudo yum install -y glibc*686*</span><br><span class="line">sudo yum install -y glibc-devel*686*</span><br><span class="line">sudo yum install -y ksh*686*</span><br><span class="line">sudo yum install -y libX11*686*</span><br><span class="line">sudo yum install -y libXau*686*</span><br><span class="line">sudo yum install -y libXi*686*</span><br><span class="line">sudo yum install -y libXtst*686*</span><br><span class="line">sudo yum install -y libaio*686*</span><br><span class="line">sudo yum install -y libaio-devel*686*</span><br><span class="line">sudo yum install -y libgcc*686*</span><br><span class="line">sudo yum install -y libstdc++*686*</span><br><span class="line">sudo yum install -y libstdc++-devel*686*</span><br><span class="line">sudo yum install -y libxcb*686*</span><br><span class="line">sudo yum install -y make*686*</span><br><span class="line">sudo yum install -y net-tools*686*</span><br><span class="line">sudo yum install -y nfs-utils*686*</span><br><span class="line">sudo yum install -y smartmontools*686*</span><br><span class="line">sudo yum install -y sysstat*686*</span><br><span class="line">sudo yum install -y unixODBC*686*</span><br></pre></td></tr></table></figure>
+<h3 id="5-开始安装"><a href="#5-开始安装" class="headerlink" title="5.开始安装"></a>5.开始安装</h3><p>通过vnc连接server，在安装目录下执行 <code>./runInstaller</code><br>安装过程具体每一步操作参考: <a href="http://xintq.net/2017/04/18/install-db12c-ol73/#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AE%BE%E7%BD%AE" target="_blank" rel="noopener">Oracle Linux 7.3 下安装 Oracle Database 12c R2</a></p>
+<p>Oracle环境变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export ORACLE_BASE=/home/oracle/u01/app</span><br><span class="line">export ORACLE_HOME=/home/oracle/u01/app/product/12.2.0/dbhome_1</span><br><span class="line">export PATH=$ORACLE_HOME/bin:$PATH</span><br><span class="line">export ORACLE_SID=catadb</span><br></pre></td></tr></table></figure>
+<p>Listener开启和关闭方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lsnrctl start</span><br><span class="line">lsnrctl stop</span><br></pre></td></tr></table></figure>
+<p>TIPS: 如果遇到<code>sqlplus command not found</code> <code>lsnrctl command not found</code>，检查下环境变量是否失效</p>
+<p>创建Oracle实例的方法: 执行 <code>$ORACLE_HOME/bin/dbca</code></p>
+<h2 id="Sharding集群版"><a href="#Sharding集群版" class="headerlink" title="Sharding集群版"></a>Sharding集群版</h2><h3 id="1-节点需要安装的服务"><a href="#1-节点需要安装的服务" class="headerlink" title="1.节点需要安装的服务"></a>1.节点需要安装的服务</h3><p>Master节点: Oracle RDMS，GSM<br>Slave节点: Oracle RDMS</p>
+<p>Oracle安装<code>Singleinstance database installation</code>版本，安装好之后仅仅在Master节点创建实例（非<code>non-cdb</code>）</p>
+<p>slave节点可采用响应文件进行静默安装 <code>./runInstaller -silent -responseFile /home/oracle/db.rsp</code></p>
+<p>安装详细过程过程参考</p>
+<ul>
+<li><p><a href="https://blogs.oracle.com/database4cn/12c-oracle-sharding" target="_blank" rel="noopener">12c新特性-Oracle Sharding简介</a></p>
+</li>
+<li><p><a href="http://blog.csdn.net/lzw5210/article/details/68065766" target="_blank" rel="noopener">纯干货：手把手地教你搭建Oracle Sharding数据库分片技术</a></p>
+</li>
+</ul>
+<h3 id="2-配置hosts和防火墙"><a href="#2-配置hosts和防火墙" class="headerlink" title="2.配置hosts和防火墙"></a>2.配置hosts和防火墙</h3><p>配置SDB与各个shard节点的host</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">100.88.11.91 OceanBase088011091.gtjsqa OceanBase088011091</span><br><span class="line">100.88.11.96 OceanBase088011096.gtjsqa OceanBase088011096</span><br><span class="line">100.88.8.49 OceanBase008049.gtjsqa OceanBase008049</span><br></pre></td></tr></table></figure>
+<p>关闭防火墙，开发机上默认是关闭的，最好检查一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo service iptables status</span><br><span class="line">sudo service iptables stop</span><br></pre></td></tr></table></figure>
+<h3 id="3-Shard配置流程"><a href="#3-Shard配置流程" class="headerlink" title="3.Shard配置流程"></a>3.Shard配置流程</h3><ul>
+<li><p>环境变量</p>
+<p>  Oracle</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export ORACLE_BASE=/home/oracle/u01/app</span><br><span class="line">export ORACLE_HOME=/home/oracle/u01/app/product/12.2.0/dbhome_1</span><br><span class="line">export PATH=$ORACLE_HOME/bin:$PATH</span><br><span class="line">export ORACLE_SID=catadb</span><br></pre></td></tr></table></figure>
+<p>  GSM</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export ORACLE_BASE=/home/oracle/u01/app</span><br><span class="line">export ORACLE_HOME=/home/oracle/u01/app/product/12.2.0/gsmhome_1</span><br><span class="line">export PATH=$PATH:$HOME/bin:$ORACLE_HOME/bin</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>在master服务器(catalog 数据库/shard director)，连接到Sharding catalog数据库, 解锁 GSMCATUSER 用户，shard director 通过GSMCATUSER 用户连接到shard catalog database</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; alter user gsmcatuser identified by oracle account unlock;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>在 catalog数据库，创建管理用户mygds，用户mygds用于存储Sharding管理信息，GDSCTL接口通过用户mygds连接到catalog数据库</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; create user mygds identified by oracle;</span><br><span class="line">SQL&gt; grant connect, create session, gsmadmin_role to mygds;</span><br><span class="line">SQL&gt; grant inherit privileges on user SYS to GSMADMIN_INTERNAL;</span><br><span class="line">SQL&gt; exec DBMS_SCHEDULER.SET_AGENT_REGISTRATION_PASS(&apos;oracle&apos;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>在gsm1服务器(catalog 数据库/shard director)，创建shard catalog，在shard catalog中配置remote scheduler agent</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ gdsctl</span><br><span class="line">GDSCTL&gt; create shardcatalog -database OceanBase088011091:1521:catadb -chunks 12 -user mygds/oracle -sdb shdb -region region1, region2 -agent_port 8080 -agent_password oracle</span><br><span class="line">Catalog is created</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建和启动shard director</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    GDSCTL&gt; add gsm -gsm sharddirector3 -listener 1522 -pwd oracle -catalog OceanBase088011091:1521:catadb -region region1</span><br><span class="line">    GSM successfully added</span><br><span class="line">    </span><br><span class="line">    GDSCTL&gt;start gsm -gsm sharddirector3</span><br><span class="line">GSM is started successfully</span><br><span class="line"></span><br><span class="line">    GDSCTL&gt; add credential -credential cre_reg1 -osaccount oracle -ospassword oracle</span><br><span class="line">    The operation completed successfully</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>去shard节点上进行注册</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ schagent -start</span><br><span class="line">Scheduler agent started using port 21620</span><br><span class="line">$ schagent -status</span><br><span class="line">$ echo oracle | schagent -registerdatabase 100.88.11.91 8080</span><br><span class="line">$ lsnrctl stop</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<pre><code>**一定要关闭shard节点上的监听器**
+</code></pre><ul>
+<li><p>deploy shard</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">    $ gdsctl</span><br><span class="line">    GDSCTL&gt; set gsm -gsm sharddirector3</span><br><span class="line">    </span><br><span class="line">    GDSCTL&gt; connect mygds/oracle</span><br><span class="line">    Catalog connection is established</span><br><span class="line">    </span><br><span class="line">    GDSCTL&gt; add shardgroup -shardgroup primary_shardgroup -deploy_as primary -region region1</span><br><span class="line">    The operation completed successfully</span><br><span class="line">    </span><br><span class="line">    GDSCTL&gt; add invitednode OceanBase088011096</span><br><span class="line">    </span><br><span class="line">    GDSCTL&gt; create shard -shardgroup primary_shardgroup -destination OceanBase088011096 -credential cre_reg1 -sys_password oracle</span><br><span class="line">    The operation completed successfully</span><br><span class="line">DB Unique Name: sh1</span><br><span class="line"></span><br><span class="line">    GDSCTL&gt; deploy</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<pre><code>查看shard配置 `config shard`
+查看invitednode `config vncr`
+删除shard配置 `remove shard -shard sh1`
+删除invitednode `remove invitednode oceanbase004085`
+
+看到如下信息，说明shard集群已经搭建成功
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">    GDSCTL&gt;config shard</span><br><span class="line">Catalog connection is established</span><br><span class="line">Name                Shard Group         Status    State       Region    Availability</span><br><span class="line">----                -----------         ------    -----       ------    ------------</span><br><span class="line">sh1                 primary_shardgroup  Ok        Deployed    region1   ONLINE</span><br><span class="line">sh2                 primary_shardgroup  Ok        Deployed    region1   ONLINE</span><br></pre></td></tr></table></figure>
+</code></pre><h3 id="3-注意事项"><a href="#3-注意事项" class="headerlink" title="3.注意事项"></a>3.注意事项</h3><p>下面是我安装过程中碰到的坑</p>
+<ul>
+<li>安装Oracle过程中会检查安装条件，ignore即可</li>
+<li>slave节点安装好Oracle后，关闭Listener,否则deploy过程中会报错</li>
+<li>add shard过程中，如果遇到<code>destination not found</code>错误，检查节点上Hosts文件配置，确保各个节点上可以ping通</li>
+<li>deploy过程中十分缓慢（10分钟至20分钟），成功或者错误都会返回信息</li>
+</ul>
+<p>如果还碰到困难参考下面帖子:</p>
+<ul>
+<li><p><a href="https://oracleblog.org/working-case/add-sharding-node-and-chunk-migration/" target="_blank" rel="noopener">re-shard和chunk migration</a></p>
+</li>
+<li><p><a href="http://www.111cn.net/database/Oracle/110339.htm" target="_blank" rel="noopener">Oracle sharding常见错误及解决方法</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/04/主流云数据库中的PL调研/" rel="next" title="主流云数据库中的PL调研">
+                <i class="fa fa-chevron-left"></i> 主流云数据库中的PL调研
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/04/Oracle-12c-Sharding功能PL使用调研/" rel="prev" title="Oracle_12c_Sharding功能PL使用调研">
+                Oracle_12c_Sharding功能PL使用调研 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjkwNi85NDY3"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Li Luxi</p>
+              <p class="site-description motion-element" itemprop="description">干货&原创</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:lxlichn@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://gitlab.com/liluximax" target="_blank" title="GitLab">
+                      
+                        <i class="fa fa-fw fa-gitlab"></i>GitLab</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Sharding新功能简介"><span class="nav-number">1.</span> <span class="nav-text">Sharding新功能简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Oracle-12c-realese2安装教程"><span class="nav-number">2.</span> <span class="nav-text">Oracle 12c realese2安装教程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Oracle下载地址"><span class="nav-number">2.1.</span> <span class="nav-text">Oracle下载地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单机节点"><span class="nav-number">2.2.</span> <span class="nav-text">单机节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shard集群信息"><span class="nav-number">2.3.</span> <span class="nav-text">shard集群信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单机版"><span class="nav-number">2.4.</span> <span class="nav-text">单机版</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-创建oracle用户及oinstall用户组"><span class="nav-number">2.4.1.</span> <span class="nav-text">1.创建oracle用户及oinstall用户组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-设置swap分区"><span class="nav-number">2.4.2.</span> <span class="nav-text">2.设置swap分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-vnc配置"><span class="nav-number">2.4.3.</span> <span class="nav-text">3.vnc配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-安装oracle-12c依赖包"><span class="nav-number">2.4.4.</span> <span class="nav-text">4.安装oracle 12c依赖包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-开始安装"><span class="nav-number">2.4.5.</span> <span class="nav-text">5.开始安装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sharding集群版"><span class="nav-number">2.5.</span> <span class="nav-text">Sharding集群版</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-节点需要安装的服务"><span class="nav-number">2.5.1.</span> <span class="nav-text">1.节点需要安装的服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-配置hosts和防火墙"><span class="nav-number">2.5.2.</span> <span class="nav-text">2.配置hosts和防火墙</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Shard配置流程"><span class="nav-number">2.5.3.</span> <span class="nav-text">3.Shard配置流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-注意事项"><span class="nav-number">2.5.4.</span> <span class="nav-text">3.注意事项</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Li Luxi</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/canvas_sphere.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

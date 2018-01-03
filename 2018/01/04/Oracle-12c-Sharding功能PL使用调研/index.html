@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Oracle,sharding,PL" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="环境信息123456789101112master：100.88.11.91 1521 SID=catadbuser:app_schema   password:oraclesystem:oracleshard1:100.88.11.96 1521 SID=sh1user:app_schema   password:oracleshard2:100.88.8.49 1521 SID=sh2user">
+<meta name="keywords" content="Oracle,sharding,PL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle_12c_Sharding功能PL使用调研">
+<meta property="og:url" content="http://yoursite.com/2018/01/04/Oracle-12c-Sharding功能PL使用调研/index.html">
+<meta property="og:site_name" content="李璐汐的分享">
+<meta property="og:description" content="环境信息123456789101112master：100.88.11.91 1521 SID=catadbuser:app_schema   password:oraclesystem:oracleshard1:100.88.11.96 1521 SID=sh1user:app_schema   password:oracleshard2:100.88.8.49 1521 SID=sh2user">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://cdn.app.compendium.com/uploads/user/e7c690e8-6ff9-102a-ac6d-e4aebca50425/f4a5b21d-66fa-4885-92bf-c4e81c06d916/Image/613751e21de943c16c35d330717c7df9/sharding11.png">
+<meta property="og:updated_time" content="2018-01-03T12:26:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Oracle_12c_Sharding功能PL使用调研">
+<meta name="twitter:description" content="环境信息123456789101112master：100.88.11.91 1521 SID=catadbuser:app_schema   password:oraclesystem:oracleshard1:100.88.11.96 1521 SID=sh1user:app_schema   password:oracleshard2:100.88.8.49 1521 SID=sh2user">
+<meta name="twitter:image" content="https://cdn.app.compendium.com/uploads/user/e7c690e8-6ff9-102a-ac6d-e4aebca50425/f4a5b21d-66fa-4885-92bf-c4e81c06d916/Image/613751e21de943c16c35d330717c7df9/sharding11.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/04/Oracle-12c-Sharding功能PL使用调研/"/>
+
+
+
+
+
+  <title>Oracle_12c_Sharding功能PL使用调研 | 李璐汐的分享</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?3b6919bba4c7bf67de7e03fc03cc893b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李璐汐的分享</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/04/Oracle-12c-Sharding功能PL使用调研/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Li Luxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李璐汐的分享">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Oracle_12c_Sharding功能PL使用调研</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-04T04:23:39+08:00">
+                2018-01-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Database/" itemprop="url" rel="index">
+                    <span itemprop="name">Database</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="环境信息"><a href="#环境信息" class="headerlink" title="环境信息"></a>环境信息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">master：</span><br><span class="line">100.88.11.91 1521 SID=catadb</span><br><span class="line">user:app_schema   password:oracle</span><br><span class="line">system:oracle</span><br><span class="line"></span><br><span class="line">shard1:</span><br><span class="line">100.88.11.96 1521 SID=sh1</span><br><span class="line">user:app_schema   password:oracle</span><br><span class="line"></span><br><span class="line">shard2:</span><br><span class="line">100.88.8.49 1521 SID=sh2</span><br><span class="line">user:app_schema   password:oracle</span><br></pre></td></tr></table></figure>
+<h2 id="PL使用调研"><a href="#PL使用调研" class="headerlink" title="PL使用调研"></a>PL使用调研</h2><p><img src="https://cdn.app.compendium.com/uploads/user/e7c690e8-6ff9-102a-ac6d-e4aebca50425/f4a5b21d-66fa-4885-92bf-c4e81c06d916/Image/613751e21de943c16c35d330717c7df9/sharding11.png" alt="Oracle Sharding"></p>
+<a id="more"></a>
+<p>实验环境中Sharding集群有由台机器组成，一台master，两台shard。集群中每一台机器都独立安装Oracle<code>Singleinstance database installation</code>版本，也就是说每台机器都可以当做Oracle单节点使用。master节点上多安装了GSM（Global Service Mananger），GSM类似于监听器，将客户端对SDB的请求路由到对应的shard，通过它来实现对Sharding的集中部署和管理。从安装层面可以看出，如果想要使用Oracle Sharding的新特性，就一定需要在master上面进行操作。</p>
+<p>分区在表空间级别跨shards分布，每个表空间关联一个特定的shard。一个shard表的每一个分区放单独的表空间，并且每个表空间关联到一个特定的shard。根据不同的sharding方法，这个关联可以自动建立或者根据定义创建。尽管一个shard表的多个分区放在多个单独主机的数据库上（这些数据库完全独立，不共享CPU、内存等软件和硬件），但是应用访问表时就如同访问一个单独数据库中的分区表一样。应用发出的SQL语句不需要依赖shard号和shard的物理配置。</p>
+<p><strong>Oracle Sharding的方法:</strong><br>Oracle Sharding支持3种方法shard/分片方法：<br>System-Managed Sharding:这种方法用户不用指定数据存放在哪个shard中。Sharding通过一致性哈希(CONSISTENT HASH)方法将数据分区(partitioning)，并自动分布在不同的Shard。System-managed sharding只能有一个shardspace.<br>Composite Sharding: 这种方法用户创建多个shardspaces ，每个shardspaces 中存放一定范围(range)或者列表(list)的数据。一般情况下，Shardspace按照区域来划分，比如美国区域的shard属于shardspace cust_america，欧洲的shard属于shardspace cust_europe。<br>Subpartitions with Sharding: Sharding基于表分区，因此子分区(Subpartitions)技术同样适用于Sharding</p>
+<h3 id="建表"><a href="#建表" class="headerlink" title="建表"></a>建表</h3><p>Sharding新特性中出现两种新的表模式（sharded table和duplicated table）。在一个session中，需要先执行<code>alter session enable shard ddl;</code>来开启shard ddl操作。在master上创建sharded table和duplicated table时，相同定义的table会出现在shard节点上。在master或者shard上面创建none-sharded table，那么这些table仅出现在单机上。</p>
+<ul>
+<li>创建表空间集合</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLESPACE SET TSP_SET_1 using template (datafile size 100m autoextend on next 10M maxsize unlimited extent management local segment space management auto);</span><br><span class="line"></span><br><span class="line">CREATE TABLESPACE products_tsp datafile size 100m autoextend on next 10M maxsize unlimited extent management local uniform size 1m;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建sharded table</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CREATE SHARDED TABLE Customers</span><br><span class="line">  (</span><br><span class="line">    CustId      VARCHAR2(60) NOT NULL,</span><br><span class="line">    FirstName   VARCHAR2(60),</span><br><span class="line">    LastName    VARCHAR2(60),</span><br><span class="line">    Sal         NUMBER,</span><br><span class="line">    Zone        NUMBER,</span><br><span class="line">    CONSTRAINT pk_customers PRIMARY KEY (CustId)</span><br><span class="line">  ) TABLESPACE SET TSP_SET_1</span><br><span class="line">PARTITION BY CONSISTENT HASH (CustId) PARTITIONS AUTO;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建duplicated table</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE DUPLICATED TABLE Products</span><br><span class="line">  (</span><br><span class="line">    ProductId  INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,</span><br><span class="line">    Name       VARCHAR2(128),</span><br><span class="line">    DescrUri   VARCHAR2(128),</span><br><span class="line">    LastPrice  NUMBER(19,4)</span><br><span class="line">  ) TABLESPACE products_tsp;</span><br></pre></td></tr></table></figure>
+<p>复制表可以被复制到所有的shard上，这种在每个shard上有相同内容的表叫做复制表（Duplicated Table）<br>需要经常跟shard表关联的小表适合于作为复制表（Duplicated Table），适用于：<br>（1）只读表<br>（2）大量跨shard的读操作</p>
+<p><strong>Note:</strong></p>
+<blockquote>
+<p>In Oracle Database 12c Release 2, only a single table family is supported in an SDB.</p>
+</blockquote>
+<p>一个表家族（Table Family）中没有任何父表的表叫做根表（root table），每个表家族中只能有一个根表。</p>
+<p>分区键（Sharding Key）必须是UNIQUE索引的关键字列的关键字子集</p>
+<p>限制条件：<br>1、分区键必须是唯一性约束的（主键或者唯一索引）<br>2、分区键只能指定一列<br>3、不能既有主键定义，又有唯一索引定义</p>
+<p>子表的分区键需要以root table的分区键做为外键</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">CREATE SHARDED TABLE Orders</span><br><span class="line">  (</span><br><span class="line">    OrderId     INTEGER NOT NULL,</span><br><span class="line">    CustId      VARCHAR2(60) NOT NULL,</span><br><span class="line">    OrderDate   TIMESTAMP NOT NULL,</span><br><span class="line">    SumTotal    NUMBER(19,4),</span><br><span class="line">    Status      CHAR(4),</span><br><span class="line">    CONSTRAINT  pk_orders PRIMARY KEY (CustId, OrderId),</span><br><span class="line">    CONSTRAINT  fk_orders_parent FOREIGN KEY (CustId) </span><br><span class="line">    REFERENCES Customers ON DELETE CASCADE</span><br><span class="line">  ) PARTITION BY REFERENCE (fk_orders_parent);</span><br></pre></td></tr></table></figure>
+<h3 id="Procedure-Function创建"><a href="#Procedure-Function创建" class="headerlink" title="Procedure / Function创建"></a>Procedure / Function创建</h3><p>在master节点上创建Procedure或者Function，shard节点上会自动创建相同的Procedure或者Function。在shard节点上创建Procedure或者Function，这些Procedure或者Function只会存在shard节点上，不会同步到其他节点上。</p>
+<h3 id="Insert操作"><a href="#Insert操作" class="headerlink" title="Insert操作"></a>Insert操作</h3><p>在master节点上插入数据，对于sharded table，数据会分布到shard节点上，在master上可以看到全部数据，shard节点上只能看到属于该shard节点上的数据；对于duplicated table，每个shard节点上都有一个完整数据的副本。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">create or replace PROCEDURE sp_insert(custid VARCHAR2, firstname VARCHAR2, sal number, zone number) IS</span><br><span class="line">BEGIN</span><br><span class="line">    INSERT into CUSTOMERS (CUSTID, FIRSTNAME, Sal, Zone) values (custid, firstname, sal, zone);</span><br><span class="line">END;</span><br><span class="line"></span><br><span class="line">create or replace PROCEDURE insert_batch(custid VARCHAR2, firstname VARCHAR2, sal number, zone number) IS</span><br><span class="line">BEGIN</span><br><span class="line">    INSERT into CUSTOMERS (CUSTID, FIRSTNAME, Sal, Zone) values (custid, firstname, sal, zone);</span><br><span class="line">    INSERT into CUSTOMERS (CUSTID, FIRSTNAME, Sal, Zone) values (&apos;40&apos;, &apos;a&apos;, 3000, 0);</span><br><span class="line">    INSERT into CUSTOMERS (CUSTID, FIRSTNAME, Sal, Zone) values (&apos;41&apos;, &apos;a&apos;, 4000, 1);</span><br><span class="line">    INSERT into CUSTOMERS (CUSTID, FIRSTNAME, Sal, Zone) values (&apos;42&apos;, &apos;a&apos;, 5000, 2);</span><br><span class="line">END;</span><br><span class="line"></span><br><span class="line">SQL&gt; call sp_insert(&apos;39&apos;, &apos;b&apos;, 2000, 1);</span><br><span class="line">SQL&gt; call insert_batch(&apos;39&apos;, &apos;b&apos;, 2000, 1);</span><br></pre></td></tr></table></figure>
+<p>可以看出，PL可以实现对不同shard的插入操作。</p>
+<p>先在shard2上插入一行数据，然后删除，把相同的数据插入到shard1上，发现本来应该属于shard2上的数据，并不能插入到shard1上面</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shard2 SQL&gt; insert into Customers (CustId, Zone) values (&apos;6&apos;, 0);</span><br><span class="line">shard2 SQL&gt; delete from Customers where Custid = &apos;6&apos;;</span><br><span class="line">shard1 SQL&gt; insert into Customers (CustId, Zone) values (&apos;6&apos;, 0);</span><br><span class="line">shard1 SQL&gt; ORA-14466: 无法修改只读分区或子分区中的数据。</span><br></pre></td></tr></table></figure>
+<h3 id="Select操作"><a href="#Select操作" class="headerlink" title="Select操作"></a>Select操作</h3><ul>
+<li>普通查询</li>
+</ul>
+<p>通过执行Select解释计划发现，master上执行的是remote计划。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">--单条查询</span><br><span class="line">create or replace PROCEDURE sp_query(name VARCHAR2) AS</span><br><span class="line">id VARCHAR(60);</span><br><span class="line">begin</span><br><span class="line">select CUSTID into id from CUSTOMERS WHERE FIRSTNAME = name;</span><br><span class="line">dbms_output.put_line(id);</span><br><span class="line">end;</span><br><span class="line"></span><br><span class="line">--带游标的多条查询</span><br><span class="line">create or replace PROCEDURE sp_query_all AS</span><br><span class="line">TYPE sp_cursor is REF CURSOR;</span><br><span class="line">id CUSTOMERS.CUSTID%TYPE;</span><br><span class="line">sp sp_cursor;</span><br><span class="line">BEGIN</span><br><span class="line">OPEN sp FOR select CUSTID into id from CUSTOMERS; </span><br><span class="line">FOR cur IN (select CUSTID into id from CUSTOMERS) LOOP</span><br><span class="line">    dbms_output.put_line(&apos;: &apos; || cur.CUSTID);</span><br><span class="line">END LOOP;</span><br><span class="line">END;</span><br><span class="line"></span><br><span class="line">--执行</span><br><span class="line">SQL&gt; call SP_QUERY(&apos;10a&apos;);</span><br><span class="line">SQL&gt; call SP_QUERY_ALL();</span><br></pre></td></tr></table></figure>
+<p>因此，单条的查询和游标及循环操作在Sharding的PL是支持的。</p>
+<ul>
+<li>连接查询</li>
+</ul>
+<p>使用建表部分中建立的Customers和Orders两个表，插入一些数据，做连接测试。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">insert into Customers (CustId, FIRSTNAME, SAL, ZONE) values (&apos;a100&apos;, &apos;a&apos;, 1000, 0);</span><br><span class="line">insert into Customers (CustId, FIRSTNAME, SAL, ZONE) values (&apos;b100&apos;, &apos;b&apos;, 2000, 1);</span><br><span class="line">insert into Customers (CustId, FIRSTNAME, SAL, ZONE) values (&apos;c100&apos;, &apos;c&apos;, 3000, 2);</span><br><span class="line">insert into Customers (CustId, FIRSTNAME, SAL, ZONE) values (&apos;d100&apos;, &apos;d&apos;, 2000, 3);</span><br><span class="line"></span><br><span class="line">insert into Orders (OrderId, CustId, OrderDate, SumTotal, Status) Values (1001, &apos;a100&apos;, to_timestamp(&apos;2013-9-16 17:03:00.29999&apos;, &apos;yyyy-mm-dd hh24:mi:ss:ff&apos;), 10, 0);</span><br><span class="line">insert into Orders (OrderId, CustId, OrderDate, SumTotal, Status) Values (1002, &apos;a100&apos;, to_timestamp(&apos;2014-9-16 17:03:00.29999&apos;, &apos;yyyy-mm-dd hh24:mi:ss:ff&apos;), 20, 0);</span><br><span class="line">insert into Orders (OrderId, CustId, OrderDate, SumTotal, Status) Values (1003, &apos;a100&apos;, to_timestamp(&apos;2015-9-16 17:03:00.29999&apos;, &apos;yyyy-mm-dd hh24:mi:ss:ff&apos;), 30, 0);</span><br><span class="line">insert into Orders (OrderId, CustId, OrderDate, SumTotal, Status) Values (1004, &apos;d100&apos;, to_timestamp(&apos;2015-9-16 17:03:00.29999&apos;, &apos;yyyy-mm-dd hh24:mi:ss:ff&apos;), 30, 0);</span><br></pre></td></tr></table></figure>
+<p>执行上述操作后，发现数据分散到shard1和shard2上面，在master进行join操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; select * from Customers join Orders using(CustId);</span><br><span class="line">SQL&gt; select * from Customers left join Orders using (CustId);</span><br><span class="line">SQL&gt; select * from Customers join Orders on Customers.Zone = Orders.Status and Customers.Custid = Orders.Custid;</span><br><span class="line"></span><br><span class="line">SQL&gt; select * from Customers join Orders on Customers.Zone = Orders.Status;</span><br><span class="line">SQL&gt; ORA-02674: 分片关键字上的联接谓词非法</span><br><span class="line">SQL&gt; select * from Customers, Orders;</span><br><span class="line">SQL&gt; ORA-02674: 分片关键字上的联接谓词非法</span><br></pre></td></tr></table></figure>
+<p>发现连接的条件必须含有分区键。</p>
+<h3 id="Update操作"><a href="#Update操作" class="headerlink" title="Update操作"></a>Update操作</h3><p>在master节点上更新数据，update的等值条件<strong>必须是</strong>分区键，否则会提示<code>ORA-02671: 不允许在多个分片上使用 DML</code>语法错误；而shard节点上对update的等值条件无特殊限制。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">--分区键更新</span><br><span class="line">create or replace PROCEDURE sp_update(id VARCHAR2, name VARCHAR2) IS</span><br><span class="line">BEGIN</span><br><span class="line">    update CUSTOMERS set FIRSTNAME = name where CUSTID = id;</span><br><span class="line">END;</span><br><span class="line"></span><br><span class="line">--非分区键更新</span><br><span class="line">create or replace PROCEDURE sp_update2(fname VARCHAR2, lname VARCHAR2) IS</span><br><span class="line">BEGIN</span><br><span class="line">    update CUSTOMERS set FIRSTNAME = fname where LASTNAME = lname;</span><br><span class="line">END;</span><br></pre></td></tr></table></figure>
+<p>其中非分区键更新Procedure只能在shard节点上正确运行。</p>
+<h3 id="Delete操作"><a href="#Delete操作" class="headerlink" title="Delete操作"></a>Delete操作</h3><p>使用限制类似于Update，master上删除数据的等值条件必须是分区键。</p>
+<h3 id="Function执行"><a href="#Function执行" class="headerlink" title="Function执行"></a>Function执行</h3><ul>
+<li>创建一个根据主键查询FIRSTNAME的Function，并在另一个Procedure中调用该Function，执行替换该条数据的LASTNAME为FIRSTNAME的业务逻辑</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">create or replace FUNCTION fetch_fname(id VARCHAR2) RETURN VARCHAR2 AS</span><br><span class="line">fname VARCHAR2(20);</span><br><span class="line">BEGIN</span><br><span class="line">    select FIRSTNAME into fname from Customers where Custid = id;</span><br><span class="line">    RETURN fname;</span><br><span class="line">END;</span><br><span class="line"></span><br><span class="line">create or replace procedure duplicate_fname2lname(id varchar2) AS</span><br><span class="line">fname varchar2(20);</span><br><span class="line">lname varchar2(20);</span><br><span class="line">begin</span><br><span class="line">lname := Fetch_Fname(id);</span><br><span class="line">Update_Lname(id, lname);</span><br><span class="line">end;</span><br><span class="line"></span><br><span class="line">SQL&gt; call duplicate_fname2lname(&apos;14&apos;);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在select中执行自定义Function，master上不支持提示<code>ORA-02670: 不受支持的 SQL 构造: PL/SQL function</code>异常；shard节点上可以正确执行</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">--定义一个计算税率的函数</span><br><span class="line">create or replace function sal_tax (v_sal number) </span><br><span class="line">return number </span><br><span class="line">is </span><br><span class="line">    begin </span><br><span class="line">        if(v_sal &lt; 2000) then </span><br><span class="line">            return 0.10; </span><br><span class="line">        elsif(v_sal &lt; 2750) then </span><br><span class="line">            return 0.15; </span><br><span class="line">        else </span><br><span class="line">            return 0.20; </span><br><span class="line">        end if; </span><br><span class="line">    end;</span><br><span class="line"></span><br><span class="line">--执行</span><br><span class="line">master SQL&gt; select Sal_Tax(sal) from Customers;</span><br><span class="line">master SQL&gt; ORA-02670: 不受支持的 SQL 构造: PL/SQL function</span><br><span class="line">shard SQL&gt; select Sal_Tax(sal) from Customers;</span><br><span class="line">shard SQL&gt; successful</span><br></pre></td></tr></table></figure>
+<h3 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">create or replace PROCEDURE update_sal(id VARCHAR2, sal_ number) IS</span><br><span class="line">BEGIN</span><br><span class="line">    update CUSTOMERS set sal = sal_ where CUSTID = id;</span><br><span class="line">END;</span><br><span class="line"></span><br><span class="line">--执行</span><br><span class="line">begin</span><br><span class="line">update_sal(&apos;10&apos;, 0);</span><br><span class="line">update_sal(&apos;16&apos;, 0);</span><br><span class="line">savepoint A;</span><br><span class="line">update_sal(&apos;40&apos;, 0);</span><br><span class="line">rollback to savepoint A;</span><br><span class="line">commit;</span><br><span class="line">end;</span><br></pre></td></tr></table></figure>
+<p>Custid为10或40的数据分布在shard1节点上，Custid为16的数据分布在shard2节点上。该涉及分布式事务的匿名块可以在master节点上正确执行。</p>
+<h3 id="程序包"><a href="#程序包" class="headerlink" title="程序包"></a>程序包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">--创建包的声明部分——包头</span><br><span class="line">create or replace package pkg as</span><br><span class="line">    b varchar2(10);</span><br><span class="line">    c_id constant number := 100;</span><br><span class="line">    procedure sp_insert(custid VARCHAR2, firstname VARCHAR2, sal number, zone number);</span><br><span class="line">    function fetch_fname(id VARCHAR2) RETURN VARCHAR2;</span><br><span class="line">end;</span><br><span class="line"></span><br><span class="line">--创建包的定义部分——包体</span><br><span class="line">create or replace package body pkg as</span><br><span class="line">    default_salary constant int := 5000;    --package的私有变量</span><br><span class="line">    PROCEDURE sp_insert(custid VARCHAR2, firstname VARCHAR2, sal number, zone number) IS</span><br><span class="line">        BEGIN</span><br><span class="line">            INSERT into CUSTOMERS (CUSTID, FIRSTNAME, Sal, Zone) values (custid, firstname, sal, zone);</span><br><span class="line">        END;</span><br><span class="line">    FUNCTION fetch_fname(id VARCHAR2) RETURN VARCHAR2 AS</span><br><span class="line">        fname VARCHAR2(20);</span><br><span class="line">        BEGIN</span><br><span class="line">            select FIRSTNAME into fname from Customers where Custid = id;</span><br><span class="line">        RETURN fname;</span><br><span class="line">        END;</span><br><span class="line">END;</span><br><span class="line"></span><br><span class="line">--执行</span><br><span class="line">SQL&gt; call pkg.sp_insert(&apos;50&apos;, &apos;A&apos;, 2000, 0);</span><br><span class="line"></span><br><span class="line">begin</span><br><span class="line">DBMS_OUTPUT.put_line(Pkg.Fetch_Fname(&apos;10&apos;));</span><br><span class="line">DBMS_OUTPUT.put_line(Pkg.c_id);</span><br><span class="line">end;</span><br></pre></td></tr></table></figure>
+<p>package中可以定义变量、procedure和function。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/04/Oracle-12c-Sharding集群安装教程/" rel="next" title="Oracle_12c_Sharding集群安装教程">
+                <i class="fa fa-chevron-left"></i> Oracle_12c_Sharding集群安装教程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/04/最简洁的Hexo-Next-Github-Pages博客搭建教程/" rel="prev" title="最简洁的Hexo/Next/Github Pages博客搭建教程">
+                最简洁的Hexo/Next/Github Pages博客搭建教程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjkwNi85NDY3"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Li Luxi</p>
+              <p class="site-description motion-element" itemprop="description">干货&原创</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:lxlichn@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://gitlab.com/liluximax" target="_blank" title="GitLab">
+                      
+                        <i class="fa fa-fw fa-gitlab"></i>GitLab</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境信息"><span class="nav-number">1.</span> <span class="nav-text">环境信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PL使用调研"><span class="nav-number">2.</span> <span class="nav-text">PL使用调研</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#建表"><span class="nav-number">2.1.</span> <span class="nav-text">建表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Procedure-Function创建"><span class="nav-number">2.2.</span> <span class="nav-text">Procedure / Function创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Insert操作"><span class="nav-number">2.3.</span> <span class="nav-text">Insert操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Select操作"><span class="nav-number">2.4.</span> <span class="nav-text">Select操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Update操作"><span class="nav-number">2.5.</span> <span class="nav-text">Update操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Delete操作"><span class="nav-number">2.6.</span> <span class="nav-text">Delete操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Function执行"><span class="nav-number">2.7.</span> <span class="nav-text">Function执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式事务"><span class="nav-number">2.8.</span> <span class="nav-text">分布式事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序包"><span class="nav-number">2.9.</span> <span class="nav-text">程序包</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Li Luxi</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/canvas_sphere.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

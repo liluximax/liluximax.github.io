@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="云计算,云数据库,存储过程,PL" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简介Figure 1. Database-as-a-Service Wave, Q2 2017 如今主流云数据库产品大多采用传统RDS上云的方式，在传统RDS上面增加了即时伸缩、监控、数据快照与备份等功能。从开发的角度上看，使用这些云RDS是与传统RDS是相同的，现有数据的代码、应用程序和工具也可以用在这些云RDS上面。对于PL，这些传统云RDS也是支持的，用法和使用与传统RDS一致。 AWS的A">
+<meta name="keywords" content="云计算,云数据库,存储过程,PL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="主流云数据库中的PL调研">
+<meta property="og:url" content="http://yoursite.com/2018/01/04/主流云数据库中的PL调研/index.html">
+<meta property="og:site_name" content="李璐汐的分享">
+<meta property="og:description" content="简介Figure 1. Database-as-a-Service Wave, Q2 2017 如今主流云数据库产品大多采用传统RDS上云的方式，在传统RDS上面增加了即时伸缩、监控、数据快照与备份等功能。从开发的角度上看，使用这些云RDS是与传统RDS是相同的，现有数据的代码、应用程序和工具也可以用在这些云RDS上面。对于PL，这些传统云RDS也是支持的，用法和使用与传统RDS一致。 AWS的A">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://d1.awsstatic.com/analyst-reports/Forrester_Wave_DBaaS_Q2_2017.PNG">
+<meta property="og:updated_time" content="2018-01-03T12:18:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="主流云数据库中的PL调研">
+<meta name="twitter:description" content="简介Figure 1. Database-as-a-Service Wave, Q2 2017 如今主流云数据库产品大多采用传统RDS上云的方式，在传统RDS上面增加了即时伸缩、监控、数据快照与备份等功能。从开发的角度上看，使用这些云RDS是与传统RDS是相同的，现有数据的代码、应用程序和工具也可以用在这些云RDS上面。对于PL，这些传统云RDS也是支持的，用法和使用与传统RDS一致。 AWS的A">
+<meta name="twitter:image" content="https://d1.awsstatic.com/analyst-reports/Forrester_Wave_DBaaS_Q2_2017.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/04/主流云数据库中的PL调研/"/>
+
+
+
+
+
+  <title>主流云数据库中的PL调研 | 李璐汐的分享</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?3b6919bba4c7bf67de7e03fc03cc893b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李璐汐的分享</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/04/主流云数据库中的PL调研/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Li Luxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李璐汐的分享">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">主流云数据库中的PL调研</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-04T03:40:04+08:00">
+                2018-01-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Database/" itemprop="url" rel="index">
+                    <span itemprop="name">Database</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><img src="https://d1.awsstatic.com/analyst-reports/Forrester_Wave_DBaaS_Q2_2017.PNG" alt=""><br><em>Figure 1. Database-as-a-Service Wave, Q2 2017</em></p>
+<p>如今主流云数据库产品大多采用传统RDS上云的方式，在传统RDS上面增加了即时伸缩、监控、数据快照与备份等功能。从开发的角度上看，使用这些云RDS是与传统RDS是相同的，现有数据的代码、应用程序和工具也可以用在这些云RDS上面。对于PL，这些传统云RDS也是支持的，用法和使用与传统RDS一致。</p>
+<p>AWS的Aurora和Google的Spanner是两个分布式RDS的代表。Spanner目前尚未提供PL服务，Aurora是兼容MySQL的，提供PL功能的同时，还可以结合AWS Lambda服务使用，减轻了业务逻辑的耦合，又提高了云产品生态圈的粘性。</p>
+<p>阿里云已经推出类似的函数计算服务，但是目前仅仅可以通过OSS(对象存储)和fcli命令行触发执行，预计未来会支持API GateWay和RDS，其中RDS触发函数计算服务，很有可能采用与AWS一样的解决方案，即通过PL来调用。<br><a href="https://cn.aliyun.com/product/fc?spm=5176.8142029.388261.207.Qh8LLR" target="_blank" rel="noopener">阿里云函数计算</a></p>
+<a id="more"></a>
+<h2 id="亚马逊AWS-RDS"><a href="#亚马逊AWS-RDS" class="headerlink" title="亚马逊AWS    RDS"></a>亚马逊AWS    RDS</h2><p>AWS RDS可选6种数据库引擎</p>
+<ul>
+<li>Amazon Aurora</li>
+<li>MariaDB</li>
+<li>MySQL</li>
+<li>Oracle</li>
+<li>SQL Server</li>
+<li>PostgreSQL</li>
+</ul>
+<h3 id="Amazon-Aurora已支持PL"><a href="#Amazon-Aurora已支持PL" class="headerlink" title="Amazon Aurora已支持PL"></a>Amazon Aurora已支持PL</h3><p>Amazon Aurora 是与 MySQL 和 PostgreSQL 兼容的关系数据库引擎，既具备高端商用数据库的速度和可用性，又有开源数据库的简单性和成本效益。它的性能最高可达到 MySQL 的五倍，具有商业数据库的安全性、可用性和可靠性，但成本只是商业数据库的十分之一。</p>
+<p>性能：在最大的 Amazon Aurora 实例上，您最高可以实现每秒 50 万次读取和 10 万次写入。</p>
+<p><strong>PL支持（着重调研AWS Lambda）：</strong></p>
+<blockquote>
+<ol>
+<li>传统方式使用存储过程</li>
+<li>通过存储过程调用AWS Lambda服务（相当于把业务逻辑转移至Lambda服务）</li>
+</ol>
+</blockquote>
+<p>AWS Lambda无需配置或管理服务器即可运行代码。您只需按消耗的计算时间付费 – 代码未运行时不产生费用<br><a href="https://aws.amazon.com/cn/lambda/?nc2=h_m1" target="_blank" rel="noopener">AWS Lambda官方介绍</a></p>
+<p>官方推荐的做法是对 <code>mysql.lambda_async</code> 的调用包装在存储过程中，<code>mysql.lambda_async</code> 过程是一个异步调用 Lambda 函数的内置存储过程.即将存储过程的逻辑封装在<code>mysql.lambda_async</code>中，通过CALL存储过程或者触发器来调用<code>mysql.lambda_async</code>中的逻辑。</p>
+<p><strong>AWS Lambda 结合PL examples:</strong></p>
+<ul>
+<li><p>通过调用存储过程来调用 AWS Lambda 函数</p>
+<p>  AWS Lambda 函数（放置业务逻辑）</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">import boto3</span><br><span class="line"></span><br><span class="line">ses = boto3.client(&apos;ses&apos;)</span><br><span class="line"></span><br><span class="line">def SES_send_email(event, context):</span><br><span class="line"></span><br><span class="line">return ses.send_email(</span><br><span class="line">    Source=event[&apos;email_from&apos;],</span><br><span class="line">    Destination=&#123;</span><br><span class="line">        &apos;ToAddresses&apos;: [</span><br><span class="line">        event[&apos;email_to&apos;],</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    Message=&#123;</span><br><span class="line">        &apos;Subject&apos;: &#123;</span><br><span class="line">        &apos;Data&apos;: event[&apos;email_subject&apos;]</span><br><span class="line">        &#125;,</span><br><span class="line">        &apos;Body&apos;: &#123;</span><br><span class="line">            &apos;Text&apos;: &#123;</span><br><span class="line">                &apos;Data&apos;: event[&apos;email_body&apos;]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>  存储过程</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> DROP PROCEDURE IF EXISTS SES_send_email;</span><br><span class="line">DELIMITER ;;</span><br><span class="line">CREATE PROCEDURE SES_send_email(IN email_from VARCHAR(255), </span><br><span class="line">							  IN email_to VARCHAR(255), </span><br><span class="line">							  IN subject VARCHAR(255), </span><br><span class="line">							  IN body TEXT) LANGUAGE SQL </span><br><span class="line"> BEGIN</span><br><span class="line">  CALL mysql.lambda_async(</span><br><span class="line">	 &apos;arn:aws:lambda:us-west-2:123456789012:function:SES_send_email&apos;,</span><br><span class="line">	 CONCAT(&apos;&#123;&quot;email_to&quot; : &quot;&apos;, email_to, </span><br><span class="line">		 &apos;&quot;, &quot;email_from&quot; : &quot;&apos;, email_from, </span><br><span class="line">		 &apos;&quot;, &quot;email_subject&quot; : &quot;&apos;, subject, </span><br><span class="line">		 &apos;&quot;, &quot;email_body&quot; : &quot;&apos;, body, &apos;&quot;&#125;&apos;)</span><br><span class="line"> );</span><br><span class="line"> END</span><br><span class="line"> ;;</span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<pre><code>调用存储过程来调用 AWS Lambda 函数
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; call SES_send_email(&apos;example_from@amazon.com&apos;, &apos;example_to@amazon.com&apos;, &apos;Email subject&apos;, &apos;Email content&apos;);</span><br></pre></td></tr></table></figure>
+</code></pre><ul>
+<li><p>调用 AWS Lambda 函数来从触发器发布事件</p>
+<p>  AWS Lambda 函数</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import boto3</span><br><span class="line"></span><br><span class="line">sns = boto3.client(&apos;sns&apos;)</span><br><span class="line"></span><br><span class="line">def SNS_publish_message(event, context):</span><br><span class="line"></span><br><span class="line">return sns.publish(</span><br><span class="line">    TopicArn=&apos;arn:aws:sns:us-west-2:123456789012:Sample_Topic&apos;,</span><br><span class="line">    Message=event[&apos;message&apos;],</span><br><span class="line">    Subject=event[&apos;subject&apos;],</span><br><span class="line">    MessageStructure=&apos;string&apos;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>  存储过程</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">  DROP PROCEDURE IF EXISTS SNS_Publish_Message;</span><br><span class="line"> DELIMITER ;;</span><br><span class="line"> CREATE PROCEDURE SNS_Publish_Message (IN subject VARCHAR(255), </span><br><span class="line">									IN message TEXT) LANGUAGE SQL </span><br><span class="line"> BEGIN</span><br><span class="line">CALL mysql.lambda_async(&apos;arn:aws:lambda:us-west-2:123456789012:function:SNS_publish_message&apos;, </span><br><span class="line">   CONCAT(&apos;&#123; &quot;subject&quot; : &quot;&apos;, subject, </span><br><span class="line">		  &apos;&quot;, &quot;message&quot; : &quot;&apos;, message, &apos;&quot; &#125;&apos;)</span><br><span class="line">   );</span><br><span class="line"> END</span><br><span class="line"> ;;</span><br><span class="line"> DELIMITER ;</span><br></pre></td></tr></table></figure>
+<p>  表</p>
+  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">   <span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`Customer_Feedback`</span> (</span><br><span class="line"> <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line"> <span class="string">`customer_name`</span> <span class="built_in">varchar</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line"> <span class="string">`customer_feedback`</span> <span class="built_in">varchar</span>(<span class="number">1024</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line"> PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br></pre></td></tr></table></figure>
+<p>  触发</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  DELIMITER ;;</span><br><span class="line">  CREATE TRIGGER TR_Customer_Feedback_AI </span><br><span class="line">AFTER INSERT ON Customer_Feedback </span><br><span class="line">FOR EACH ROW</span><br><span class="line"> BEGIN</span><br><span class="line">SELECT CONCAT(&apos;New customer feedback from &apos;, NEW.customer_name), NEW.customer_feedback INTO @subject, @feedback;</span><br><span class="line">CALL SNS_Publish_Message(@subject, @feedback);</span><br><span class="line"> END</span><br><span class="line"> ;;</span><br><span class="line"> DELIMITER ;</span><br></pre></td></tr></table></figure>
+<p>  将行插入表中触发通知</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; insert into Customer_Feedback (customer_name, customer_feedback) VALUES (&apos;Sample Customer&apos;, &apos;Good job guys!&apos;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><em>参考文献</em>：</p>
+<ol>
+<li><a href="http://docs.aws.amazon.com/zh_cn/AmazonRDS/latest/UserGuide/Aurora.Lambda.html" target="_blank" rel="noopener">从 Amazon Aurora 数据库群集调用 Lambda 函数</a></li>
+<li><a href="http://soft.zhiding.cn/software_zone/2016/1019/3084634.shtml" target="_blank" rel="noopener">亚马逊推Aurora新功能 进一步完善AWS服务</a></li>
+</ol>
+<h3 id="MySQL-Oracle-SQL-Server-PostgreSQL的PL可以直接在AWS-RDS上使用"><a href="#MySQL-Oracle-SQL-Server-PostgreSQL的PL可以直接在AWS-RDS上使用" class="headerlink" title="MySQL Oracle SQL Server PostgreSQL的PL可以直接在AWS RDS上使用"></a>MySQL Oracle SQL Server PostgreSQL的PL可以直接在AWS RDS上使用</h3><p>Amazon RDS 让您能够访问非常熟悉的 MySQL、Oracle、SQL Server 或 PostgreSQL 数据库的功能。这意味着您当前用于现有 数据库的代码、应用程序和工具也可以无缝用于 Amazon RDS<br><a href="https://aws.amazon.com/cn/rds/faqs/" target="_blank" rel="noopener">AWS RDS官方说明</a>。</p>
+<h3 id="MariaDB基于MySQL开发，故可以沿用MySQL的PL"><a href="#MariaDB基于MySQL开发，故可以沿用MySQL的PL" class="headerlink" title="MariaDB基于MySQL开发，故可以沿用MySQL的PL"></a>MariaDB基于MySQL开发，故可以沿用MySQL的PL</h3><p>MariaDB Server 是由 MySQL 的原始开发人员创建的一种常用的开源关系数据库。MariaDB 数据库引擎与 MySQL Community Edition 版本 5.5 完全兼容<br><a href="https://aws.amazon.com/cn/rds/mariadb/faqs/" target="_blank" rel="noopener">AWS MariaDB官方文档</a>。</p>
+<p>##Google Cloud Platform</p>
+<ul>
+<li>Cloud SQL</li>
+<li>Cloud Spanner</li>
+</ul>
+<p>Cloud SQL是MySQL和PostgreSQL的云数据库版本，在Google Cloud Platform上托管，其中MySQL是5.6或5.7，PostgreSQL是9.6，支持存储过程，语法使用<a href="https://www.postgresql.org/docs/9.6/static/plpgsql.html" target="_blank" rel="noopener">PL/pgSQL SQL procedural language</a></p>
+<p><strong>注意：</strong><br><a href="https://cloud.google.com/spanner/docs/" target="_blank" rel="noopener">Spanner官方文档</a> 中未提及Spanner支持存储过程</p>
+<h2 id="微软Azure"><a href="#微软Azure" class="headerlink" title="微软Azure"></a>微软Azure</h2><ul>
+<li>MySQL</li>
+<li>PostgreSQL</li>
+<li>SQL Server</li>
+<li>Azure Cosmos DB (NoSQL)</li>
+</ul>
+<p>原有传统关系型数据库上云，可在云端迅速创建实例并即时伸缩，集成安全、监控、数据快照等功能，减轻数据库管理负担。存储过程的使用与传统关系型数据库相同。</p>
+<h2 id="IBM-BlueMix"><a href="#IBM-BlueMix" class="headerlink" title="IBM   BlueMix"></a>IBM   BlueMix</h2><ul>
+<li>Oracle on the cloud</li>
+<li>MySQL on the cloud</li>
+<li>DB2 on the cloud</li>
+</ul>
+<p>支持存储过程</p>
+<h2 id="Oracle-Cloud"><a href="#Oracle-Cloud" class="headerlink" title="Oracle Cloud"></a>Oracle Cloud</h2><ul>
+<li>Oracle Exadata Cloud Service</li>
+<li>MySQL on the cloud</li>
+</ul>
+<p>支持存储过程</p>
+<h2 id="SAP"><a href="#SAP" class="headerlink" title="SAP"></a>SAP</h2><p> SAP HANA提供PL功能及PL的调试<br> <a href="https://blogs.sap.com/2014/06/16/sap-hana%E4%B8%AD%E8%B0%83%E8%AF%95%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" target="_blank" rel="noopener">HANA调试PL</a></p>
+<h2 id="EnterpriseDB"><a href="#EnterpriseDB" class="headerlink" title="EnterpriseDB"></a>EnterpriseDB</h2><p>对存储过程的支持采用SPL语言<br><a href="https://www.ibm.com/support/knowledgecenter/zh/SSGU8G_11.50.0/com.ibm.gsg.doc/ids_gsg_231.htm" target="_blank" rel="noopener">SPL语言</a><br><a href="https://www.enterprisedb.com/docs/cn/8.3R2/jdbc/Postgres_Plus_Advanced_Server_JDBC_Connector_Guide_CN-22.htm#P610_32416" target="_blank" rel="noopener">Java调用EDB存储过程</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/04/Oracle-12c-Sharding集群安装教程/" rel="prev" title="Oracle_12c_Sharding集群安装教程">
+                Oracle_12c_Sharding集群安装教程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjkwNi85NDY3"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Li Luxi</p>
+              <p class="site-description motion-element" itemprop="description">干货&原创</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:lxlichn@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://gitlab.com/liluximax" target="_blank" title="GitLab">
+                      
+                        <i class="fa fa-fw fa-gitlab"></i>GitLab</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#亚马逊AWS-RDS"><span class="nav-number">2.</span> <span class="nav-text">亚马逊AWS    RDS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Amazon-Aurora已支持PL"><span class="nav-number">2.1.</span> <span class="nav-text">Amazon Aurora已支持PL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-Oracle-SQL-Server-PostgreSQL的PL可以直接在AWS-RDS上使用"><span class="nav-number">2.2.</span> <span class="nav-text">MySQL Oracle SQL Server PostgreSQL的PL可以直接在AWS RDS上使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MariaDB基于MySQL开发，故可以沿用MySQL的PL"><span class="nav-number">2.3.</span> <span class="nav-text">MariaDB基于MySQL开发，故可以沿用MySQL的PL</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#微软Azure"><span class="nav-number">3.</span> <span class="nav-text">微软Azure</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IBM-BlueMix"><span class="nav-number">4.</span> <span class="nav-text">IBM   BlueMix</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Oracle-Cloud"><span class="nav-number">5.</span> <span class="nav-text">Oracle Cloud</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SAP"><span class="nav-number">6.</span> <span class="nav-text">SAP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EnterpriseDB"><span class="nav-number">7.</span> <span class="nav-text">EnterpriseDB</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Li Luxi</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/three.min.js"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/three/canvas_sphere.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
